@@ -1,0 +1,12 @@
+
+query {
+    user (
+        id: 1
+    ) {
+        nicename
+        display_name
+        nickname
+        url
+        image
+    }
+}

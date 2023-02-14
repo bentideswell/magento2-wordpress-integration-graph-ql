@@ -1,0 +1,106 @@
+
+#
+# Base types that generally map directly to a model
+#
+type Post {
+    id: Int!
+    post_title: String
+    post_excerpt: String
+    post_content: String
+    post_date: String!
+    post_status: String!
+    url: String
+    post_type: String!
+    user: User
+    comment_status: String
+    post_name: String
+    post_parent: Int!
+    comment_count: Int
+    user: User
+    terms: [PostTerms]
+}
+
+type Term {
+    id: Int!
+    name: String
+    slug: String
+    url: String!
+    taxonomy_id: Int!
+    taxonomy: String!
+    description: String
+    parent: Int!
+    count: Int!
+}
+
+type User {
+    nicename: String
+    display_name: String
+    nickname: String
+    url: String
+    image: String
+}
+
+type Comment {
+    id: Int
+    post_id: Int
+    author: String
+    author_email: String
+    author_url: String
+    comment_date: String
+    content: String
+    comment_parent: Int
+}
+
+type PostComments {
+    post_id: Int
+    items: [Comment]
+    page_info: SearchResultPageInfo
+    total_count: Int
+}
+
+#
+# The following types are custom types that represent collections
+# rather than mapping directly to a model
+#
+
+type PostSearchResult {
+    items: [Post]
+    page_info: SearchResultPageInfo
+    total_count: Int
+}
+
+type PostTerms {
+    taxonomy: String
+    items: [Term]
+    total_count: Int
+}
+
+type Query {
+    post(
+        id: Int
+        withTaxonomies: [String] @doc (description: "An array of taxonomies to load against the post")
+    ): Post @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Post")
+
+    posts(
+        term_id: Int
+        term_taxonomy: String
+        user_id: Int
+        post_type: [String]
+        pageSize: Int = 20
+        currentPage: Int = 1
+        withTaxonomies: [String]
+    ): PostSearchResult @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Posts")
+
+    comments(
+        post_id: Int
+    ): PostComments @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Post\\Comments")
+
+    user(
+        id: Int
+    ): User @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\User")
+
+    term(
+        id: Int
+        slug: String
+    ): Term @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Term")
+}

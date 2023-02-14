@@ -1,0 +1,15 @@
+
+query {
+    term (
+        id: 1
+    ) {
+            id
+            name
+            slug
+            taxonomy_id
+            taxonomy
+            description
+            parent
+            count
+    }
+}
