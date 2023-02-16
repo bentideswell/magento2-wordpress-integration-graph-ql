@@ -12,7 +12,7 @@ abstract class AbstractResolver implements ResolverInterface
     /**
      *
      */
-    abstract protected function validateInput(array $args): void;
+    abstract protected function validateInput(array $args): array;
 
     /**
      *
@@ -29,7 +29,7 @@ abstract class AbstractResolver implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        $this->validateInput($args);
+        $args = $this->validateInput($args);
 
         $collection = $this->buildCollection($args);
 

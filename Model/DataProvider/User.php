@@ -29,8 +29,8 @@ class User
             $user = $this->userRepository->get((int)$id);
 
             return [
+                'model' => $user,
                 'id' => (int)$user->getId(),
-
                 'nicename' => $user->getUserNicename(),
                 'display_name' => $user->getDisplayName(),
                 'nickname' => $user->getNickname(),

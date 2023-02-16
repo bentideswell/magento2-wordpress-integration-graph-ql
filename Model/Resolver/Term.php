@@ -4,18 +4,20 @@
  */
 namespace FishPig\WordPressGraphQl\Model\Resolver;
 
-use FishPig\WordPress\Model\Post as PostModel;
-use Magento\Framework\GraphQl\Config\Element\Field;
-use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
-use Magento\Framework\GraphQl\Query\Resolver\Value;
-use Magento\Framework\GraphQl\Query\ResolverInterface;
-use Magento\Framework\GraphQl\Schema\Type\ResolveInfo;
 use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
-class Term implements ResolverInterface
+use FishPig\WordPress\Model\TermRepository;
+use FishPig\WordPressGraphQl\Model\DataProvider\Term as TermDataProvider;
+
+class Term implements \Magento\Framework\GraphQl\Query\ResolverInterface
 {
     /**
-     * @var \FishPig\WordPressGraphQl\Model\DataProvider\Term
+     * @var TermRepository
+     */
+    private $termRepository = null;
+
+    /**
+     * @var TermDataProvider
      */
     private $termDataProvider = null;
 
@@ -23,38 +25,44 @@ class Term implements ResolverInterface
      *
      */
     public function __construct(
-        \FishPig\WordPressGraphQl\Model\DataProvider\Term $termDataProvider
+        TermRepository $termRepository,
+        TermDataProvider $termDataProvider
     ) {
+        $this->termRepository = $termRepository;
         $this->termDataProvider = $termDataProvider;
     }
 
     public function resolve(
-        Field $field,
+        \Magento\Framework\GraphQl\Config\Element\Field $field,
         $context,
-        ResolveInfo $info,
+        \Magento\Framework\GraphQl\Schema\Type\ResolveInfo $info,
         array $value = null,
         array $args = null
     ) {
-        if (!empty($args['id']) && !empty($args['slug'])) {
-            throw new GraphQlInputException(
-                __('You cannot specify an id and slug filter at the same time.')
-            );
+        if (!empty($args['withTaxonomy'])) {
+            try {
+                $term = $this->termRepository->getWithTaxonomy(
+                    (int)$args['id'],
+                    $args['withTaxonomy']
+                );
+
+                if ($term->getTaxonomy() !== $args['withTaxonomy']) {
+                    // Term exists but is not the right taxonomy
+                    return [];
+                }
+
+                return $this->termDataProvider->getData(
+                    $term,
+                    $info->getFieldSelection()
+                );
+            } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+                return [];
+            }
         }
 
-        if (!empty($args['id'])) {
-            return $this->termDataProvider->getDataById(
-                (int)$args['id'],
-                $info->getFieldSelection()
-            );
-        } elseif (!empty($args['slug'])) {
-            return $this->termDataProvider->getDataBySlug(
-                $args['slug'],
-                $info->getFieldSelection()
-            );
-        } else {
-            throw new GraphQlInputException(
-                __('You must specify either an id or slug filter.')
-            );
-        }
+        return $this->termDataProvider->getDataById(
+            (int)$args['id'],
+            $info->getFieldSelection()
+        );
     }
 }

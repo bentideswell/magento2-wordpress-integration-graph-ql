@@ -3,6 +3,7 @@ query {
     user (
         id: 1
     ) {
+        id
         nicename
         display_name
         nickname

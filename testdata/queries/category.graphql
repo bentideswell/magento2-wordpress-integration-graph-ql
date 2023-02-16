@@ -2,6 +2,7 @@
 query {
     term (
         id: 1
+        withTaxonomy: "category"
     ) {
         id
         name

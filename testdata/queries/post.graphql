@@ -1,39 +1,42 @@
 query {
-    post (
+    posts (
         id: 1
         withTaxonomies: ["category", "post_tag"]
     ) {
-        id
-        post_title
-        post_excerpt
-        post_content
-        post_date
-        post_status
-        comment_status
-        post_name
-        url
-        post_parent
-        post_type
-        comment_count
-        user {
-            nicename
-            display_name
-            nickname
+        total_count
+        items {
+            id
+            post_title
+            post_excerpt
+            post_content
+            post_date
+            post_status
+            comment_status
+            post_name
             url
-            image
-        },
-        terms {
-            taxonomy
-            total_count
-            items {
-                id
-                name
-                slug
-                taxonomy_id
+            post_parent
+            post_type
+            comment_count
+            user {
+                nicename
+                display_name
+                nickname
+                url
+                image
+            },
+            terms {
                 taxonomy
-                description
-                parent
-                count
+                total_count
+                items {
+                    id
+                    name
+                    slug
+                    taxonomy_id
+                    taxonomy
+                    description
+                    parent
+                    count
+                }
             }
         }
     }

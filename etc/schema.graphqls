@@ -18,6 +18,7 @@ type Post {
     comment_count: Int
     user: User
     terms: [PostTerms]
+    pageAssets: PageAssets
 }
 
 type Term {
@@ -33,6 +34,7 @@ type Term {
 }
 
 type User {
+    id: Int!
     nicename: String
     display_name: String
     nickname: String
@@ -63,10 +65,15 @@ type PostComments {
 # rather than mapping directly to a model
 #
 
+type PageAssets {
+    asJson: String!
+}
+
 type PostSearchResult {
     items: [Post]
     page_info: SearchResultPageInfo
     total_count: Int
+    pageAssets: PageAssets
 }
 
 type PostTerms {
@@ -76,12 +83,8 @@ type PostTerms {
 }
 
 type Query {
-    post(
-        id: Int
-        withTaxonomies: [String] @doc (description: "An array of taxonomies to load against the post")
-    ): Post @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Post")
-
     posts(
+        id: [Int]
         term_id: Int
         term_taxonomy: String
         user_id: Int
@@ -100,7 +103,7 @@ type Query {
     ): User @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\User")
 
     term(
-        id: Int
-        slug: String
+        id: Int!
+        withTaxonomy: String @doc( description: "If set, term will only be return if taxonomy matches this value.")
     ): Term @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Term")
 }

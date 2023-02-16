@@ -68,12 +68,14 @@ class Comments extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstr
     /**
      *
      */
-    protected function validateInput(array $args): void
+    protected function validateInput(array $args): array
     {
         if (empty($args['post_id']) || (int)$args['post_id'] <= 0) {
             throw new GraphQlInputException(
                 __('Invalid or no post_id given.')
             );
         }
+
+        return $args;
     }
 }

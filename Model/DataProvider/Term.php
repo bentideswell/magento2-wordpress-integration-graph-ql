@@ -41,7 +41,7 @@ class Term
         $taxonomy = $term->getTaxonomyInstance();
 
         return [
-            '_model' => $term,
+            'model' => $term,
             'id' => (int)$term->getId(),
             'name' => $term->getName(),
             'slug' => $term->getSlug(),

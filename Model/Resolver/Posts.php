@@ -40,6 +40,12 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
     {
         $posts = $this->collectionFactory->create()->addIsViewableFilter();
 
+        if (!empty($args['id'])) {
+            $posts->addFieldToFilter('ID', ['in' => $args['id']]);
+            // We might as well set the page size here as it cannot be
+            // more than count($args['id'])
+            $posts->setPageSize(count($args['id']));
+        }
         if (!empty($args['post_type'])) {
             $posts->addPostTypeFilter($args['post_type']);
         }
@@ -64,7 +70,7 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
 
         if (!empty($args['withTaxonomies'])) {
             $data['terms'] = $this->termDataProvider->getListByPost(
-                $data['_model'],
+                $data['model'],
                 $args['withTaxonomies']
             );
         }
@@ -75,7 +81,7 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
     /**
      *
      */
-    protected function validateInput(array $args): void
+    protected function validateInput(array $args): array
     {
         if (isset($args['term_id']) && !isset($args['term_taxonomy'])) {
             throw new GraphQlInputException(
@@ -84,5 +90,7 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
                 )
             );
         }
+
+        return $args;
     }
 }

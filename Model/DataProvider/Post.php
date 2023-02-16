@@ -56,7 +56,7 @@ class Post
     public function getData(PostModel $post, array $fields = null): array
     {
         $data = [
-            '_model' => $post,
+            'model' => $post,
             'id' => (int)$post->getId(),
             'post_title' => $post->getName() ?? '',
             'post_date' => $post->getData('post_date_gmt'),
