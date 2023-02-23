@@ -7,6 +7,7 @@ namespace FishPig\WordPressGraphQl\Model\DataProvider;
 use FishPig\WordPress\Model\Term as TermModel;
 use FishPig\WordPress\Model\Taxonomy as TaxonomyModel;
 use FishPig\WordPress\Model\Post as PostModel;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 
 class Term
 {
@@ -45,7 +46,7 @@ class Term
             'id' => (int)$term->getId(),
             'name' => $term->getName(),
             'slug' => $term->getSlug(),
-            'taxonomy_id' => (int)$taxonomy->getId(),
+            'url' => $term->getUrl(),
             'taxonomy' => $taxonomy->getTaxonomy(),
             'description' => $taxonomy->getDescription(),
             'parent' => (int)$taxonomy->getParent(),
@@ -64,7 +65,7 @@ class Term
                 $fields
             );
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            return [];
+            throw new GraphQlNoSuchEntityException(__($e->getMessage()));
         }
     }
 
@@ -79,7 +80,7 @@ class Term
                 $fields
             );
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-            return [];
+            throw new GraphQlNoSuchEntityException(__($e->getMessage()));
         }
     }
 

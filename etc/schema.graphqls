@@ -2,8 +2,8 @@
 #
 # Base types that generally map directly to a model
 #
-type Post {
-    id: Int!
+type WordPressPost {
+    id: ID!
     post_title: String
     post_excerpt: String
     post_content: String
@@ -11,30 +11,30 @@ type Post {
     post_status: String!
     url: String
     post_type: String!
-    user: User
+    user: WordPressUser
+    featured_image: [WordPressImage]
     comment_status: String
     post_name: String
     post_parent: Int!
     comment_count: Int
-    user: User
-    terms: [PostTerms]
-    pageAssets: PageAssets
+    user: WordPressUser
+    terms: [WordPressPostTerms]
+    pageAssets: WordPressPageAssets
 }
 
-type Term {
-    id: Int!
+type WordPressTerm {
+    id: ID!
     name: String
     slug: String
     url: String!
-    taxonomy_id: Int!
     taxonomy: String!
     description: String
     parent: Int!
     count: Int!
 }
 
-type User {
-    id: Int!
+type WordPressUser {
+    id: ID!
     nicename: String
     display_name: String
     nickname: String
@@ -42,22 +42,23 @@ type User {
     image: String
 }
 
-type Comment {
-    id: Int
+type WordPressComment {
+    id: ID!
     post_id: Int
-    author: String
-    author_email: String
+    author_name: String
     author_url: String
+    author_email_hash: String
+    comment_url: String
     comment_date: String
-    content: String
+    comment_content: String
     comment_parent: Int
 }
 
-type PostComments {
-    post_id: Int
-    items: [Comment]
+type WordPressPostComments {
+    post_id: ID!
+    items: [WordPressComment]
     page_info: SearchResultPageInfo
-    total_count: Int
+    total_count: Int!
 }
 
 #
@@ -65,45 +66,66 @@ type PostComments {
 # rather than mapping directly to a model
 #
 
-type PageAssets {
+type WordPressPageAssets {
     asJson: String!
 }
 
-type PostSearchResult {
-    items: [Post]
+type WordPressPostSearchResult {
+    items: [WordPressPost]
     page_info: SearchResultPageInfo
-    total_count: Int
-    pageAssets: PageAssets
+    total_count: Int!
+    pageAssets: WordPressPageAssets
 }
 
-type PostTerms {
-    taxonomy: String
-    items: [Term]
-    total_count: Int
+type WordPressPostTerms {
+    taxonomy: String!
+    items: [WordPressTerm]
+    total_count: Int!
+}
+
+type WordPressImage {
+    name: String!
+    url: String!
+    width: Int
+    height: Int
+    mime_type: String
+    sizes: [WordPressImageResized]
+}
+
+type WordPressImageResized {
+    name: String!
+    url: String!
+    width: Int
+    height: Int
+    mime_type: String
 }
 
 type Query {
-    posts(
+    wpPosts(
         id: [Int]
         term_id: Int
         term_taxonomy: String
         user_id: Int
         post_type: [String]
+        permalink: String
         pageSize: Int = 20
         currentPage: Int = 1
         withTaxonomies: [String]
-    ): PostSearchResult @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Posts")
+    ): WordPressPostSearchResult @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Posts")
 
-    comments(
+    wpComments(
         post_id: Int
-    ): PostComments @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Post\\Comments")
+        pageSize: Int = 20
+        currentPage: Int = 1
+    ): WordPressPostComments @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Post\\Comments")
 
-    user(
+    wpUser(
         id: Int
-    ): User @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\User")
+        nicename: String
+    ): WordPressUser @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\User")
 
-    term(
+    wpTerm(
         id: Int!
         withTaxonomy: String @doc( description: "If set, term will only be return if taxonomy matches this value.")
-    ): Term @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Term")
+    ): WordPressTerm @resolver( class: "FishPig\\WordPressGraphQl\\Model\\Resolver\\Term")
 }

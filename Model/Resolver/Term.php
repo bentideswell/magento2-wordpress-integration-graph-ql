@@ -8,6 +8,7 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 
 use FishPig\WordPress\Model\TermRepository;
 use FishPig\WordPressGraphQl\Model\DataProvider\Term as TermDataProvider;
+use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 
 class Term implements \Magento\Framework\GraphQl\Query\ResolverInterface
 {
@@ -46,17 +47,12 @@ class Term implements \Magento\Framework\GraphQl\Query\ResolverInterface
                     $args['withTaxonomy']
                 );
 
-                if ($term->getTaxonomy() !== $args['withTaxonomy']) {
-                    // Term exists but is not the right taxonomy
-                    return [];
-                }
-
                 return $this->termDataProvider->getData(
                     $term,
                     $info->getFieldSelection()
                 );
             } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-                return [];
+                throw new GraphQlNoSuchEntityException(__($e->getMessage()));
             }
         }
 

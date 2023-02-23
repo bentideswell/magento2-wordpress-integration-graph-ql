@@ -99,6 +99,34 @@ class Post
                 return (int)$value === 1 ? $this->userDataProvider->getDataById(
                     $post->getUserId()
                 ) : '';
+            },
+            'featured_image' => function ($post, $value) {
+                if ((int)$value !== 1) {
+                    return [];
+                }
+
+                if (!($image = $post->getImage())) {
+                    return [];
+                }
+
+                $data = [
+                    'name' => 'original',
+                    'url' => $image->getData('guid'),
+                    'width' => (int)$image->getWidth(),
+                    'height' => (int)$image->getHeight(),
+                    'mime_type' => $image->getData('post_mime_type'),
+                    'sizes' => []
+                ];
+
+                foreach ($image->getSizes() as $code => $imageData) {
+                    $imageData['mime_type'] = $imageData['mime-type'] ?? null;
+                    unset($imageData['file'], $imageData['mime-type']);
+                    $data['sizes'][$code] = $imageData;
+                    $data['sizes'][$code]['name'] = $code;
+                    $data['sizes'][$code]['url'] = $image->getImageUrl($code);
+                }
+
+                return [$data];
             }
         ];
     }

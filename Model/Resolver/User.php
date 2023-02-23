@@ -38,6 +38,12 @@ class User implements ResolverInterface
         array $value = null,
         array $args = null
     ) {
-        return $this->dataProvider->getDataById((int)$args['id']);
+        if (!empty($args['id'])) {
+            return $this->dataProvider->getDataById((int)$args['id']);
+        } elseif (!empty($args['nicename'])) {
+            return $this->dataProvider->getDataByNicename($args['nicename']);
+        }
+
+        throw new GraphQlInputException(__('No input filter was specified.'));
     }
 }

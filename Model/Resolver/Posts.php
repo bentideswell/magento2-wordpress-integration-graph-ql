@@ -26,11 +26,13 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
     public function __construct(
         PostDataProvider $dataProvider,
         PostCollectionFactory $collectionFactory,
-        \FishPig\WordPressGraphQl\Model\DataProvider\Term $termDataProvider
+        \FishPig\WordPressGraphQl\Model\DataProvider\Term $termDataProvider,
+        \FishPig\WordPress\Model\ResourceModel\Post\Permalink $postPermalinkResource
     ) {
         $this->dataProvider = $dataProvider;
         $this->collectionFactory = $collectionFactory;
         $this->termDataProvider = $termDataProvider;
+        $this->postPermalinkResource = $postPermalinkResource;
     }
 
     /**
@@ -40,12 +42,19 @@ class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\Abstract
     {
         $posts = $this->collectionFactory->create()->addIsViewableFilter();
 
+        if (!empty($args['permalink'])) {
+            $args['id'] = [
+                $this->postPermalinkResource->getPostIdByPathInfo($args['permalink']) ?: 0
+            ];
+        }
+
         if (!empty($args['id'])) {
             $posts->addFieldToFilter('ID', ['in' => $args['id']]);
             // We might as well set the page size here as it cannot be
             // more than count($args['id'])
             $posts->setPageSize(count($args['id']));
         }
+
         if (!empty($args['post_type'])) {
             $posts->addPostTypeFilter($args['post_type']);
         }

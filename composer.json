@@ -1,0 +1,17 @@
+{
+    "name": "fishpig/magento2-wordpress-integration-graph-ql",
+    "description": "GraphQL module for fishpig/magento2-wordpress-integration",
+    "version": "0.1.0",
+    "require": {
+        "fishpig/magento2-wordpress-integration": "^3.27.11"
+    },
+    "type": "magento2-module",
+    "autoload": {
+    	"files": [
+            "registration.php"
+    	],
+    	"psr-4": {
+            "FishPig\\WordPressGraphQl\\": ""
+    	}
+    }
+}

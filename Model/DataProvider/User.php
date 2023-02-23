@@ -4,6 +4,8 @@
  */
 namespace FishPig\WordPressGraphQl\Model\DataProvider;
 
+use FishPig\WordPress\Model\User as UserModel;
+
 class User
 {
     /**
@@ -23,20 +25,44 @@ class User
     /**
      *
      */
-    public function getDataById($id): array
+    public function getData(UserModel $user, array $fields = []): array
+    {
+        return [
+            'model' => $user,
+            'id' => (int)$user->getId(),
+            'nicename' => $user->getUserNicename(),
+            'display_name' => $user->getDisplayName(),
+            'nickname' => $user->getNickname(),
+            'url' => $user->getUrl(),
+            'image' => $user->getImage()
+        ];
+    }
+
+    /**
+     *
+     */
+    public function getDataById(int $id, array $fields = []): array
     {
         try {
-            $user = $this->userRepository->get((int)$id);
+            return $this->getData(
+                $this->userRepository->get((int)$id),
+                $fields
+            );
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            return [];
+        }
+    }
 
-            return [
-                'model' => $user,
-                'id' => (int)$user->getId(),
-                'nicename' => $user->getUserNicename(),
-                'display_name' => $user->getDisplayName(),
-                'nickname' => $user->getNickname(),
-                'url' => $user->getUrl(),
-                'image' => $user->getImage()
-            ];
+    /**
+     *
+     */
+    public function getDataByNicename(string $nicename, array $fields = []): array
+    {
+        try {
+            return $this->getData(
+                $this->userRepository->getByField($nicename, 'user_nicename'),
+                $fields
+            );
         } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
             return [];
         }
