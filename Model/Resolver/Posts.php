@@ -11,6 +11,16 @@ use Magento\Framework\GraphQl\Exception\GraphQlInputException;
 class Posts extends \FishPig\WordPressGraphQl\Model\Resolver\Collection\AbstractResolver
 {
     /**
+     * @auto
+     */
+    protected $termDataProvider = null;
+
+    /**
+     * @auto
+     */
+    protected $postPermalinkResource = null;
+
+    /**
      * @var PostDataProvider
      */
     private $dataProvider = null;

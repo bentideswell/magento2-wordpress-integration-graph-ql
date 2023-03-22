@@ -16,6 +16,41 @@ use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 abstract class AbstractTests implements \FishPig\WordPress\App\Debug\TestInterface
 {
     /**
+     * @auto
+     */
+    protected $urlBuilder = null;
+
+    /**
+     * @auto
+     */
+    protected $postCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $termCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $userCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $commentCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $context = null;
+
+    /**
+     * @auto
+     */
+    protected $graphQlConfig = null;
+
+    /**
      *
      */
     const TAB = '    ';

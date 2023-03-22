@@ -12,6 +12,11 @@ use Magento\Framework\GraphQl\Exception\GraphQlNoSuchEntityException;
 class Term
 {
     /**
+     * @auto
+     */
+    protected $termCollectionFactory = null;
+
+    /**
      *
      */
     private $termRepository = null;

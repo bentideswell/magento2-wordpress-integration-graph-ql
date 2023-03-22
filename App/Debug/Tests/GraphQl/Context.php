@@ -18,6 +18,36 @@ use Magento\Framework\GraphQl\Config as GraphQlConfig;
 class Context
 {
     /**
+     * @auto
+     */
+    protected $postCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $termCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $userCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $commentCollectionFactory = null;
+
+    /**
+     * @auto
+     */
+    protected $urlBuilder = null;
+
+    /**
+     * @auto
+     */
+    protected $graphQlConfig = null;
+
+    /**
      *
      */
     public function __construct(
